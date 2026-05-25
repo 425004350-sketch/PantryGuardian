@@ -5,9 +5,6 @@
 #include <sstream>
 #include <limits>
 
-// ============================================================================
-// MODULE 1: FOODITEM ENTITY (OOP Integration & True Encapsulation)
-// ============================================================================
 class FoodItem {
 private:
     std::string name;
@@ -45,9 +42,6 @@ public:
     }
 };
 
-// ============================================================================
-// MODULE 2: PANTRYMANAGER DATABASE ENGINE (Collection Management & CRUD)
-// ============================================================================
 class PantryManager {
 private:
     std::vector<FoodItem> inventory; 
@@ -64,24 +58,24 @@ private:
 public:
     void addItem(const FoodItem& item) {
         inventory.push_back(item);
-        std::cout << "\n>>> [SUCCESS] Resource \"" << item.getName() << "\" safely appended to registry.\n";
+        std::cout << "\n>>> [SUCCESS] Resource \"" << item.getName() << "\" appended.\n";
     }
 
     void displayInventory() const {
         if (inventory.empty()) {
-            std::cout << "\n[System Notice: Active stock sequence is completely empty.]\n";
+            std::cout << "\n[Notice: Inventory is empty.]\n";
             return;
         }
         std::cout << "\n===================================================\n";
-        std::cout << "             CURRENT PANTRY STOCK METRICS          \n";
+        std::cout << "             CURRENT PANTRY STOCK                  \n";
         std::cout << "===================================================\n";
         for (const auto& item : inventory) {
             std::cout << " * " << item.getName() 
                       << " | Qty: " << item.getQuantity() 
-                      << " | Expiration Window: " << item.getDaysToExpiration() << " Days";
+                      << " | Expiration: " << item.getDaysToExpiration() << " Days";
             
             if (item.isSpoiled()) {
-                std::cout << " -> [CRITICAL: SPOILED / WASTE RISK SCORE: " << item.getWasteRiskScore() << "]";
+                std::cout << " -> [CRITICAL: SPOILED / SCORE: " << item.getWasteRiskScore() << "]";
             } else if (item.getDaysToExpiration() <= 2) {
                 std::cout << " -> [WARNING: CONSUME IMMEDIATELY]";
             }
@@ -111,13 +105,13 @@ public:
 
     void simulateDay() {
         if (inventory.empty()) {
-            std::cout << "\n[System Notice: Simulation skipped. Local register space is empty.]\n";
+            std::cout << "\n[Notice: Simulation skipped. Empty inventory.]\n";
             return;
         }
         for (auto& item : inventory) {
             item.reduceDays();
         }
-        std::cout << "\n>>> [SYSTEM EVENT] 24 Hours elapsed. Shelf life constraints tracking updated.\n";
+        std::cout << "\n>>> [SYSTEM] 24 Hours elapsed.\n";
     }
 
     void loadFromFile(const std::string& filename) {
@@ -141,7 +135,7 @@ public:
     void saveToFile(const std::string& filename) const {
         std::ofstream file(filename);
         if (!file.is_open()) {
-            std::cerr << "\n[CRITICAL ERROR] Local device permission issue. System context missing data.\n";
+            std::cerr << "\n[ERROR] Could not save to file.\n";
             return;
         }
         for (const auto& item : inventory) {
@@ -153,21 +147,18 @@ public:
     }
 };
 
-// ============================================================================
-// MODULE 3: USER INTERFACE APPLICATION CONTROLLER (Loops & Stream Security)
-// ============================================================================
 void displayMenu() {
     std::cout << "\n===================================================\n";
-    std::cout << "         PANTRY GUARDIAN INTERFACE (SDG 12)        \n";
+    std::cout << "               PANTRY MANAGER                      \n";
     std::cout << "===================================================\n";
-    std::cout << " 1. [READ]   Check Registered Inventory Stock\n";
-    std::cout << " 2. [CREATE] Ingest New Supply Batch Record\n";
-    std::cout << " 3. [UPDATE] Restock & Refresh Expiration Logs\n";
-    std::cout << " 4. [DELETE] Evict / Purge Active Asset Profile\n";
-    std::cout << " 5. [SYSTEM] Fast-Forward Simulation Frame (1 Day)\n";
-    std::cout << " 6. [EXIT]   Commit Transactions and Terminate App\n";
+    std::cout << " 1. Display Inventory\n";
+    std::cout << " 2. Add New Item\n";
+    std::cout << " 3. Restock Item\n";
+    std::cout << " 4. Delete Item\n";
+    std::cout << " 5. Advance Simulation (1 Day)\n";
+    std::cout << " 6. Exit\n";
     std::cout << "===================================================\n";
-    std::cout << "Enter command index execution sequence (1-6): ";
+    std::cout << "Select option (1-6): ";
 }
 
 int main() {
@@ -181,7 +172,6 @@ int main() {
         displayMenu();
         
         if (!(std::cin >> selection)) {
-            std::cout << "\n>>> [STREAM CORRUPTION EXCEPTION] Invalid characters typed. Re-initializing terminal input stream hooks.\n";
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             continue;
@@ -192,59 +182,47 @@ int main() {
         } 
         else if (selection == 2) {
             std::string name; int days; double qty;
-            
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear stream buffer
-            std::cout << "Assign item string label identifier: "; 
-            std::getline(std::cin, name); // Safely captures names with spaces
-            
-            std::cout << "Assign item storage shelf lifespan limit (days): "; 
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Enter item name: "; 
+            std::getline(std::cin, name);
+            std::cout << "Enter days until expiration: "; 
             std::cin >> days;
-            std::cout << "Assign volumetric count or physical weight metrics: "; 
+            std::cout << "Enter quantity: "; 
             std::cin >> qty;
-            
             manager.addItem(FoodItem(name, days, qty));
         } 
         else if (selection == 3) {
             std::string name; int days; double qty;
-            
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear stream buffer
-            std::cout << "Enter targeted item string label to update: "; 
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Enter item name to update: "; 
             std::getline(std::cin, name);
-            
-            std::cout << "Enter incoming batch baseline expiration scale: "; 
+            std::cout << "Enter new expiration days: "; 
             std::cin >> days;
-            std::cout << "Enter incremental incoming product mass volume: "; 
+            std::cout << "Enter additional quantity: "; 
             std::cin >> qty;
-            
             if (manager.restockItem(name, days, qty)) {
-                std::cout << "\n>>> [UPDATE EVENT] Target inventory row identity modification sequence successful.\n";
+                std::cout << "\n>>> [SUCCESS] Item updated.\n";
             } else {
-                std::cout << "\n>>> [ERROR] No log entry matched the target criteria label pattern.\n";
+                std::cout << "\n>>> [ERROR] Item not found.\n";
             }
         } 
         else if (selection == 4) {
             std::string name;
-            
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear stream buffer
-            std::cout << "Enter targeted item identity label to erase completely: "; 
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Enter item name to delete: "; 
             std::getline(std::cin, name);
-            
             if (manager.deleteItem(name)) {
-                std::cout << "\n>>> [DELETE EVENT] Row element completely eliminated out of stack context data blocks.\n";
+                std::cout << "\n>>> [SUCCESS] Item deleted.\n";
             } else {
-                std::cout << "\n>>> [ERROR] Profile row search operation field parameters empty or invalid.\n";
+                std::cout << "\n>>> [ERROR] Item not found.\n";
             }
         } 
         else if (selection == 5) {
             manager.simulateDay();
         }
-        else if (selection != 6) {
-            std::cout << "\n>>> Execution code outside numerical boundaries. Reset constraints framework parameters.\n";
-        }
     }
 
     manager.saveToFile(databasePath);
-    std::cout << "\n>>> [SYSTEM OK] Active context instances written safely to database disk storage file. Engine shut down complete.\n";
+    std::cout << "\n>>> [SYSTEM] Data saved. Goodbye.\n";
     return 0;
 }
-
