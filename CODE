@@ -15,14 +15,11 @@ private:
     double quantity;
 
 public:
-    // Default Constructor (Required for internal vector container manipulation)
     FoodItem() : name(""), daysToExpiration(0), quantity(0.0) {}
 
-    // Overloaded Constructor for clean object initialization
     FoodItem(std::string p_name, int p_days, double p_qty) 
         : name(p_name), daysToExpiration(p_days), quantity(p_qty) {}
 
-    // Getters and Setters establishing strict Encapsulation boundaries
     std::string getName() const { return name; }
     int getDaysToExpiration() const { return daysToExpiration; }
     double getQuantity() const { return quantity; }
@@ -33,7 +30,6 @@ public:
         }
     }
 
-    // Logical Class Behaviors (Fulfills requirement for pure algorithmic operations)
     void reduceDays() { 
         daysToExpiration--; 
     }
@@ -42,7 +38,6 @@ public:
         return daysToExpiration <= 0; 
     }
     
-    // Algorithmic evaluation computing a dynamic metric on demand
     double getWasteRiskScore() const {
         if (daysToExpiration <= 0) return 100.0;
         if (daysToExpiration > 7) return 10.0;
@@ -55,27 +50,23 @@ public:
 // ============================================================================
 class PantryManager {
 private:
-    // Collection Management: Dynamic tracking database records
     std::vector<FoodItem> inventory; 
 
-    // Internal lookup utility (Linear scan framework)
     int findItemIndex(const std::string& name) const {
         for (size_t i = 0; i < inventory.size(); ++i) {
             if (inventory[i].getName() == name) {
                 return static_cast<int>(i);
             }
         }
-        return -1; // Flag indicating a non-existent item profile
+        return -1; 
     }
 
 public:
-    // [C]REATE: Append a validated item block into the sequence
     void addItem(const FoodItem& item) {
         inventory.push_back(item);
         std::cout << "\n>>> [SUCCESS] Resource \"" << item.getName() << "\" safely appended to registry.\n";
     }
 
-    // [R]EAD: Multi-record rendering using advanced iteration loops and nested decisions
     void displayInventory() const {
         if (inventory.empty()) {
             std::cout << "\n[System Notice: Active stock sequence is completely empty.]\n";
@@ -89,7 +80,6 @@ public:
                       << " | Qty: " << item.getQuantity() 
                       << " | Expiration Window: " << item.getDaysToExpiration() << " Days";
             
-            // Nested Decisions evaluating metrics inside the render matrix
             if (item.isSpoiled()) {
                 std::cout << " -> [CRITICAL: SPOILED / WASTE RISK SCORE: " << item.getWasteRiskScore() << "]";
             } else if (item.getDaysToExpiration() <= 2) {
@@ -100,32 +90,25 @@ public:
         std::cout << "===================================================\n";
     }
 
-    // [U]PDATE: Process asset restock, calculate merged metrics, and rebuild profile
     bool restockItem(const std::string& name, int newDays, double additionalQty) {
         int index = findItemIndex(name);
         if (index != -1) {
-            // Aggregate incoming quantities with legacy database entries
             double combinedQty = inventory[index].getQuantity() + additionalQty;
-            
-            // Replace old data footprint inside the vector using constructor-based overwriting
             inventory[index] = FoodItem(name, newDays, combinedQty);
             return true;
         }
         return false;
     }
 
-    // [D]ELETE: Erase specific profile indices out of contiguous storage allocation
     bool deleteItem(const std::string& name) {
         int index = findItemIndex(name);
         if (index != -1) {
-            // Vector erase uses memory offset indexing pointers to close data gaps
             inventory.erase(inventory.begin() + index);
             return true;
         }
         return false;
     }
 
-    // SYSTEM COMPONENT: Simulation Engine Matrix Step
     void simulateDay() {
         if (inventory.empty()) {
             std::cout << "\n[System Notice: Simulation skipped. Local register space is empty.]\n";
@@ -137,10 +120,9 @@ public:
         std::cout << "\n>>> [SYSTEM EVENT] 24 Hours elapsed. Shelf life constraints tracking updated.\n";
     }
 
-    // DATA PERSISTENCE: Input streams ingestion handler
     void loadFromFile(const std::string& filename) {
         std::ifstream file(filename);
-        if (!file.is_open()) return; // Suppress errors if database doesn't exist on first bootup
+        if (!file.is_open()) return; 
 
         std::string line, name;
         int days; 
@@ -149,7 +131,6 @@ public:
         inventory.clear();
         while (std::getline(file, line)) {
             std::stringstream ss(line);
-            // Read CSV formatted stream metrics safely
             if (std::getline(ss, name, ',') && ss >> days && ss.ignore() && ss >> qty) {
                 inventory.push_back(FoodItem(name, days, qty));
             }
@@ -157,7 +138,6 @@ public:
         file.close();
     }
 
-    // DATA PERSISTENCE: Output file writer persistence engine
     void saveToFile(const std::string& filename) const {
         std::ofstream file(filename);
         if (!file.is_open()) {
@@ -194,14 +174,12 @@ int main() {
     PantryManager manager;
     const std::string databasePath = "pantry_db.txt";
 
-    // Data Persistence: Seed the memory registers from past operational instances
     manager.loadFromFile(databasePath);
 
     int selection = 0;
     while (selection != 6) {
         displayMenu();
         
-        // Input Validation: Catches users entering letters or strings into an integer parameter
         if (!(std::cin >> selection)) {
             std::cout << "\n>>> [STREAM CORRUPTION EXCEPTION] Invalid characters typed. Re-initializing terminal input stream hooks.\n";
             std::cin.clear();
@@ -214,17 +192,29 @@ int main() {
         } 
         else if (selection == 2) {
             std::string name; int days; double qty;
-            std::cout << "Assign item string label identifier: "; std::cin >> name;
-            std::cout << "Assign item storage shelf lifespan limit (days): "; std::cin >> days;
-            std::cout << "Assign volumetric count or physical weight metrics: "; std::cin >> qty;
+            
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear stream buffer
+            std::cout << "Assign item string label identifier: "; 
+            std::getline(std::cin, name); // Safely captures names with spaces
+            
+            std::cout << "Assign item storage shelf lifespan limit (days): "; 
+            std::cin >> days;
+            std::cout << "Assign volumetric count or physical weight metrics: "; 
+            std::cin >> qty;
             
             manager.addItem(FoodItem(name, days, qty));
         } 
         else if (selection == 3) {
             std::string name; int days; double qty;
-            std::cout << "Enter targeted item string label to update: "; std::cin >> name;
-            std::cout << "Enter incoming batch baseline expiration scale: "; std::cin >> days;
-            std::cout << "Enter incremental incoming product mass volume: "; std::cin >> qty;
+            
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear stream buffer
+            std::cout << "Enter targeted item string label to update: "; 
+            std::getline(std::cin, name);
+            
+            std::cout << "Enter incoming batch baseline expiration scale: "; 
+            std::cin >> days;
+            std::cout << "Enter incremental incoming product mass volume: "; 
+            std::cin >> qty;
             
             if (manager.restockItem(name, days, qty)) {
                 std::cout << "\n>>> [UPDATE EVENT] Target inventory row identity modification sequence successful.\n";
@@ -234,7 +224,10 @@ int main() {
         } 
         else if (selection == 4) {
             std::string name;
-            std::cout << "Enter targeted item identity label to erase completely: "; std::cin >> name;
+            
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Clear stream buffer
+            std::cout << "Enter targeted item identity label to erase completely: "; 
+            std::getline(std::cin, name);
             
             if (manager.deleteItem(name)) {
                 std::cout << "\n>>> [DELETE EVENT] Row element completely eliminated out of stack context data blocks.\n";
@@ -250,8 +243,8 @@ int main() {
         }
     }
 
-    // Data Persistence: Secure data logs down onto local system non-volatile sectors before structural context frame collapse
     manager.saveToFile(databasePath);
     std::cout << "\n>>> [SYSTEM OK] Active context instances written safely to database disk storage file. Engine shut down complete.\n";
     return 0;
 }
+
