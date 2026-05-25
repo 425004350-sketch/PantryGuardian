@@ -11,15 +11,42 @@ This allows you to see how your pantry will look a few days from now, showing yo
 ## Repository Structure
 PantryGuardianProject/
 │
-├── .gitignore              # Tells Git to ignore temporary/compiled executable files
-├── README.md               # Project documentation and setup instructions
-├── pantry_db.txt           # The database file generated/loaded by your system
+├── .gitignore 
+├── README.md  
+├── pantry_db.txt  
 │
-├── include/                # HEADER FILES (.h) - The Class blueprints
+├── include/                
 │   ├── FoodItem.h          
 │   └── PantryManager.h     
 │
-└── src/                    # SOURCE FILES (.cpp) - The actual logic & main entry point
+└── src/                   
     ├── FoodItem.cpp        
     ├── PantryManager.cpp   
     └── main.cpp
+## Official project lead:
+Domingo, Quirc Edrian
+## Data Format 
+The system uses a Comma-Separated Values (CSV) text-based structure.
+[itemName],[daysToExpiration],[quantity]
+Example:
+Milk,5,1.5
+Apples,12,6
+Canned_Tuna,-1,3
+Chicken_Breast,1,0.75
+## How to Run
+Linux or macOS
+./PantryGuardian
+Windows with MinGW
+.\PantryGuardian.exe
+## Main Menu
+===================================================
+         PANTRY GUARDIAN INTERFACE (SDG 12)        
+===================================================
+ 1. [READ]   Check Registered Inventory Stock
+ 2. [CREATE] Ingest New Supply Batch Record
+ 3. [UPDATE] Restock & Refresh Expiration Logs
+ 4. [DELETE] Evict / Purge Active Asset Profile
+ 5. [SYSTEM] Fast-Forward Simulation Frame (1 Day)
+ 6. [EXIT]   Commit Transactions and Terminate App
+===================================================
+Enter command index execution sequence (1-6):
