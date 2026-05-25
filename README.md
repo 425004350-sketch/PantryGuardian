@@ -39,9 +39,6 @@ Linux or macOS
 Windows with MinGW
 .\PantryGuardian.exe
 ## Main Menu
-===================================================
-         PANTRY GUARDIAN INTERFACE (SDG 12)        
-===================================================
  1. [READ]   Check Registered Inventory Stock
  2. [CREATE] Ingest New Supply Batch Record
  3. [UPDATE] Restock & Refresh Expiration Logs
